@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        order_inserts: true
+        jdbc:
+          batch_size: 1000
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://localhost:1433;database=ArchiveFund
+    username: sa
+    password: MiKe_5526
+
+#spring:
+#  datasource:
+#    driver-class-name: net.ucanaccess.jdbc.UcanaccessDriver
+#    url: jdbc:ucanaccess://D:\Users\headneZzz\Downloads\af\test.mdb
+#    username: sa
+#    password: MiKe_5526

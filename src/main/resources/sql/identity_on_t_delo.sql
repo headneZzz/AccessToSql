@@ -1,0 +1,1 @@
+SET IDENTITY_INSERT Т_Дело ON;
