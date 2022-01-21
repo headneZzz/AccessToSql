@@ -12,13 +12,14 @@ import ru.headnezzz.accesstosql.model.MappingFund
 import ru.headnezzz.accesstosql.model.MappingInventory
 import ru.headnezzz.accesstosql.model.TblINVENTORY
 import ru.headnezzz.accesstosql.model.access.TDelo
-import ru.headnezzz.accesstosql.repository.FundRepository
-import ru.headnezzz.accesstosql.repository.InventoryRepository
-import ru.headnezzz.accesstosql.repository.TDeloRepository
-import ru.headnezzz.accesstosql.repository.UnitedFundDao
 import java.io.File
 import java.lang.String.format
 import javax.sql.DataSource
+import ru.headnezzz.accesstosql.model.other.TblinventoryStructure
+import ru.headnezzz.accesstosql.repository.*
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 @Component
@@ -28,26 +29,45 @@ class SpringRunner(
     val fundRepository: FundRepository,
     val unitedFundDao: UnitedFundDao,
     val inventoryRepository: InventoryRepository,
-    val tDeloRepository: TDeloRepository
+    val tDeloRepository: TDeloRepository,
+    val unitRepository: UnitRepository,
+    val inventoryStructureRepository: InventoryStructureRepository
 ) : CommandLineRunner {
 
     private val log: Logger = LoggerFactory.getLogger(SpringRunner::class.java)
 
     override fun run(vararg args: String?) {
-        exportTDeloToSql()
+        val docsFromFile = getDocsFromFile()
+        for (doc in docsFromFile) {
+            val units = unitRepository.main(doc.key, doc.value)
+            log.info("Фонд {} опись {} найдено {}", doc.key, doc.value, units.size)
+            for (unit in units) {
+                unit.isnUnit = unitRepository.getMaxIsnUnit() + 1
+                unit.id = UUID.randomUUID()
+                unit.ownerID = UUID.randomUUID()
+//                unit.creationDateTime = Instant.now()
+                unit.statusID = UUID.randomUUID()
+                if (inventoryStructureRepository.findByIsnInventoryCls(unit.isnInventoryCls) == null) {
+                    inventoryStructureRepository.save(TblinventoryStructure(unit.isnInventoryCls))
+                }
+                unitRepository.save(unit)
+            }
+        }
     }
 
     private fun exportTDeloToSql() {
-        executeSqlScript("sql/create_t_delo.sql")
+//        executeSqlScript("sql/create_t_delo.sql")
         executeSqlScript("sql/identity_on_t_delo.sql")
 
-        val tDelo: Table =
-            DatabaseBuilder.open(File("D:\\Users\\headneZzz\\Downloads\\af\\Б_Ф_Общ.mdb")).getTable("Т_Дело")
+        val tDelo = DatabaseBuilder.open(File("D:\\Users\\headneZzz\\Downloads\\af\\Б_Ф_Общ.mdb")).getTable("Т_Дело")
         val rowCount = tDelo.rowCount
-        log.info("Записей в Т_Дело: {}",rowCount)
+        log.info("Записей в Т_Дело: {}", rowCount)
         var counter = 0
         var tDela = ArrayList<TDelo>()
-        for (row in tDelo) {
+        val cursor = CursorBuilder.createCursor(tDelo)
+        cursor.findFirstRow(mapOf("Код_Дела" to 704847))
+        while (cursor.moveToNextRow()) {
+            val row = cursor.currentRow
             tDela.add(toTDelo(row))
             if (tDela.size == 1000) {
                 try {
@@ -63,6 +83,7 @@ class SpringRunner(
             }
         }
         tDeloRepository.saveAll(tDela)
+        println("Finished all threads")
     }
 
     private fun toTDelo(row: Row): TDelo {
@@ -127,7 +148,7 @@ class SpringRunner(
 
             var mappingFund: MappingFund? = null
             var it: TblINVENTORY? = null
-            val its = inventories.filter { inventory ->  inventory.inventoryNum1!! == row.getString("Номер_Описи") }
+            val its = inventories.filter { inventory -> inventory.inventoryNum1!! == row.getString("Номер_Описи") }
             for (i in its) {
                 mappingFund = mappingFunds.find { mappingFund ->
                     mappingFund.fundCode == row.getInt("Код_фонда")

@@ -1,6 +1,5 @@
 package ru.headnezzz.accesstosql.model
 
-import ru.headnezzz.accesstosql.model.other.*
 import java.time.Instant
 import java.util.*
 import javax.persistence.*
@@ -15,7 +14,7 @@ class TblUNIT {
     @Column(name = "OwnerID", nullable = false)
     var ownerID: UUID? = null
 
-    @Column(name = "CreationDateTime", nullable = false)
+    @Column(name = "Creation_Date_Time")
     var creationDateTime: Instant? = null
 
     @Column(name = "StatusID", nullable = false)
@@ -25,27 +24,22 @@ class TblUNIT {
     var deleted = false
 
     @Column(name = "ISN_UNIT", nullable = false)
-    var isnUnit: Long? = null
+    var isnUnit: Long? = 0
 
-    @ManyToOne
-    @JoinColumn(name = "ISN_HIGH_UNIT")
-    var isnHighUnit: TblUNIT? = null
+    @Column(name = "ISN_HIGH_UNIT")
+    var isnHighUnit: Long? = null
 
-    @ManyToOne
-    @JoinColumn(name = "ISN_INVENTORY")
-    var isnInventory: TblINVENTORY? = null
+    @Column(name = "ISN_INVENTORY")
+    var isnInventory: Long? = null
 
-    @ManyToOne
-    @JoinColumn(name = "ISN_DOC_TYPE")
-    var isnDocType: TbldocTypeCl? = null
+    @Column(name = "ISN_DOC_TYPE")
+    var isnDocType: Long? = null
 
-    @ManyToOne
-    @JoinColumn(name = "ISN_LOCATION")
-    var isnLocation: TblLOCATION? = null
+    @Column(name = "ISN_LOCATION")
+    var isnLocation: Long? = null
 
-    @ManyToOne
-    @JoinColumn(name = "ISN_SECURLEVEL")
-    var isnSecurlevel: TblSECURLEVEL? = null
+    @Column(name = "ISN_SECURLEVEL")
+    var isnSecurlevel: Long? = null
 
     @Column(name = "SECURITY_CHAR", length = 1)
     var securityChar: String? = null
@@ -53,17 +47,14 @@ class TblUNIT {
     @Column(name = "SECURITY_REASON", length = 1)
     var securityReason: String? = null
 
-    @ManyToOne
-    @JoinColumn(name = "ISN_INVENTORY_CLS")
-    var isnInventoryCls: TblinventoryStructure? = null
+    @Column(name = "ISN_INVENTORY_CLS")
+    var isnInventoryCls: Long = 0
 
-    @ManyToOne
-    @JoinColumn(name = "ISN_STORAGE_MEDIUM")
-    var isnStorageMedium: TblstorageMediumCl? = null
+    @Column(name = "ISN_STORAGE_MEDIUM")
+    var isnStorageMedium: Long? = null
 
-    @ManyToOne
-    @JoinColumn(name = "ISN_DOC_KIND")
-    var isnDocKind: TbldocKindCl? = null
+    @Column(name = "ISN_DOC_KIND")
+    var isnDocKind: Long? = null
 
     @Column(name = "UNIT_KIND")
     var unitKind: Int? = null
@@ -77,11 +68,9 @@ class TblUNIT {
     @Column(name = "VOL_NUM")
     var volNum: Int? = null
 
-    @Lob
     @Column(name = "NAME")
     var name: String? = null
 
-    @Lob
     @Column(name = "ANNOTATE")
     var annotate: String? = null
 
@@ -94,7 +83,6 @@ class TblUNIT {
     @Column(name = "UNIT_CATEGORY", length = 1)
     var unitCategory: String? = null
 
-    @Lob
     @Column(name = "NOTE")
     var note: String? = null
 
@@ -155,16 +143,14 @@ class TblUNIT {
     @Column(name = "CARDBOARDED", length = 1)
     var cardboarded: String? = null
 
-    @Lob
     @Column(name = "ADDITIONAL_CLS")
     var additionalCls: String? = null
 
     @Column(name = "ALL_DATE", length = 300)
     var allDate: String? = null
 
-    @ManyToOne
-    @JoinColumn(name = "ISN_SECURITY_REASON")
-    var isnSecurityReason: TblsecurityReason? = null
+    @Column(name = "ISN_SECURITY_REASON")
+    var isnSecurityReason: Long? = null
 
     @Column(name = "UNIT_NUM_TXT", length = 25)
     var unitNumTxt: String? = null
