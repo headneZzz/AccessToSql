@@ -8,18 +8,17 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator
 import org.springframework.stereotype.Component
+import ru.headnezzz.accesstosql.model.FileRow
 import ru.headnezzz.accesstosql.model.MappingFund
 import ru.headnezzz.accesstosql.model.MappingInventory
-import ru.headnezzz.accesstosql.model.TblINVENTORY
-import ru.headnezzz.accesstosql.model.access.TDelo
-import java.io.File
-import java.lang.String.format
-import javax.sql.DataSource
-import ru.headnezzz.accesstosql.model.other.TblinventoryStructure
+import ru.headnezzz.accesstosql.model.entity.TblINVENTORY
+import ru.headnezzz.accesstosql.model.entity.access.TDelo
+import ru.headnezzz.accesstosql.model.entity.other.TblinventoryStructure
 import ru.headnezzz.accesstosql.repository.*
+import java.io.File
+import java.time.Instant
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import javax.sql.DataSource
 
 
 @Component
@@ -38,21 +37,28 @@ class SpringRunner(
 
     override fun run(vararg args: String?) {
         val docsFromFile = getDocsFromFile()
-        for (doc in docsFromFile) {
-            val units = unitRepository.main(doc.key, doc.value)
-            log.info("Фонд {} опись {} найдено {}", doc.key, doc.value, units.size)
+        complexToArchiveFund(docsFromFile)
+    }
+
+    private fun complexToArchiveFund(fileRows: List<FileRow>) {
+        var totalSize = 0
+        for (fileRow in fileRows) {
+            val units = unitRepository.main(fileRow.fund.trim(), fileRow.inventory.trim())
+            log.info("Фонд {} опись {} найдено {}", fileRow.fund, fileRow.inventory, units.size)
+            totalSize += units.size
             for (unit in units) {
                 unit.isnUnit = unitRepository.getMaxIsnUnit() + 1
                 unit.id = UUID.randomUUID()
                 unit.ownerID = UUID.randomUUID()
-//                unit.creationDateTime = Instant.now()
                 unit.statusID = UUID.randomUUID()
+                unit.creationDateTime = Instant.now()
                 if (inventoryStructureRepository.findByIsnInventoryCls(unit.isnInventoryCls) == null) {
                     inventoryStructureRepository.save(TblinventoryStructure(unit.isnInventoryCls))
                 }
                 unitRepository.save(unit)
             }
         }
+        log.info("{}", totalSize)
     }
 
     private fun exportTDeloToSql() {
@@ -107,21 +113,20 @@ class SpringRunner(
         return tDelo
     }
 
-    private fun getDocsFromFile(): Map<String, String> {
-        val result = HashMap<String, String>()
+    private fun getDocsFromFile(): List<FileRow> {
+        val result = ArrayList<FileRow>()
         File("D:\\Users\\headneZzz\\Downloads\\af\\test.txt").forEachLine {
             val str = it.replace(
                 "\\s".toRegex(),
                 " "
             ).split(" ")
-            result[str[0]] = str[1]
+            result.add(FileRow(str[0], str[1]))
         }
         log.info("Считано фондов из файла: {}", result.size)
         return result
     }
 
-    private fun getMappingTDelo() {
-        val docsFromFile = getDocsFromFile()
+    private fun getMappingTDelo(docsFromFile: Map<String, String>) {
         val mappingInventories = getMappingInventories()
         val mappingTDelo = HashMap<MappingInventory, Int>()
         val tDelo: Table =
@@ -196,52 +201,6 @@ class SpringRunner(
         }
         log.info("Соответствие фондов: {}", mappingFunds.size)
         return mappingFunds
-    }
-
-    private fun createTDelo() {
-        val tDelo: Table =
-            DatabaseBuilder.open(File("D:\\Users\\headneZzz\\Downloads\\af\\Б_Ф_Общ.mdb")).getTable("Т_Дело")
-        executeSqlScript("sql/create_t_delo.sql")
-
-        for (row in tDelo) {
-            jdbcTemplate.execute(
-                format(
-                    """insert into Т_Дело (
-                        Код_Дела,
-                        Номер_Дела,
-                        Код_Описи,
-Код_фонда        ,
-Наименование_дела,
-[Кол-во_листов]  ,
-Физич_состояние  ,
-Отметка          ,
-Содержание       ,
-Год_начала       ,
-Год_конца        ,
-Заголовок_Изменен,
-Фото             ,
-Исполнитель      ,
-Дата             ,
-Точная_дата      ) values (%s, '%s', %s, %s, '%s', %s, '%s', '%s', '%s', %s, %s, '%s', '%s', %s, '%s', '%s')""",
-                    row.getInt("Код_Дела"),
-                    row.getString("Номер_Дела"),
-                    row.getInt("Код_Описи"),
-                    row.get("Код_фонда"),
-                    row.getString("Наименование_дела"),
-                    row.get("[Кол-во_листов]"),
-                    row.get("Физич_состояние"),
-                    row.get("Отметка"),
-                    row.get("Содержание"),
-                    row.get("Год_начала"),
-                    row.get("Год_конца"),
-                    row.get("Заголовок_Изменен"),
-                    row.get("Фото"),
-                    row.get("Исполнитель"),
-                    row.getLocalDateTime("Дата").toString().replace("T", " "),
-                    row.get("Точная_дата")
-                )
-            )
-        }
     }
 
     private fun createTArchives() {

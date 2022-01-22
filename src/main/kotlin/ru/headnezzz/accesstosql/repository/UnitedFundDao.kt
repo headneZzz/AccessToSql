@@ -2,7 +2,7 @@ package ru.headnezzz.accesstosql.repository
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import ru.headnezzz.accesstosql.model.UnitedFund
+import ru.headnezzz.accesstosql.model.entity.UnitedFund
 
 interface UnitedFundDao : JpaRepository<UnitedFund, String> {
     @Query(

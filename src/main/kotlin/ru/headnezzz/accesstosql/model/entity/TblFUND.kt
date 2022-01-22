@@ -1,13 +1,13 @@
-package ru.headnezzz.accesstosql.model
+package ru.headnezzz.accesstosql.model.entity
 
 import lombok.ToString
 import java.util.UUID
 import java.time.Instant
-import ru.headnezzz.accesstosql.model.other.TblARCHIVE
-import ru.headnezzz.accesstosql.model.other.TbldocTypeCl
-import ru.headnezzz.accesstosql.model.other.TblPERIOD
-import ru.headnezzz.accesstosql.model.other.TblSECURLEVEL
-import ru.headnezzz.accesstosql.model.other.TblsecurityReason
+import ru.headnezzz.accesstosql.model.entity.other.TblARCHIVE
+import ru.headnezzz.accesstosql.model.entity.other.TbldocTypeCl
+import ru.headnezzz.accesstosql.model.entity.other.TblPERIOD
+import ru.headnezzz.accesstosql.model.entity.other.TblSECURLEVEL
+import ru.headnezzz.accesstosql.model.entity.other.TblsecurityReason
 import javax.persistence.*
 
 @Entity

@@ -1,4 +1,4 @@
-package ru.headnezzz.accesstosql.model
+package ru.headnezzz.accesstosql.model.entity
 
 import java.util.*
 import javax.persistence.Column

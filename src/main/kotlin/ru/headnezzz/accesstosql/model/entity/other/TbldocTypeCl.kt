@@ -1,4 +1,4 @@
-package ru.headnezzz.accesstosql.model.other
+package ru.headnezzz.accesstosql.model.entity.other
 
 import java.util.UUID
 import javax.persistence.Column

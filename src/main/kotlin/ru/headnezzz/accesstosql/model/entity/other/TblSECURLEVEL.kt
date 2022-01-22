@@ -1,4 +1,4 @@
-package ru.headnezzz.accesstosql.model.other
+package ru.headnezzz.accesstosql.model.entity.other
 
 import java.util.UUID
 import javax.persistence.Column
@@ -7,8 +7,8 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "tblARCHIVE")
-class TblARCHIVE {
+@Table(name = "tblSECURLEVEL")
+class TblSECURLEVEL {
     @Id
     @Column(name = "ID", nullable = false)
     var id: UUID? = null

@@ -2,7 +2,7 @@ package ru.headnezzz.accesstosql.repository
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import ru.headnezzz.accesstosql.model.TblUNIT
+import ru.headnezzz.accesstosql.model.entity.TblUNIT
 import java.util.*
 
 interface UnitRepository : JpaRepository<TblUNIT, UUID> {
@@ -74,7 +74,7 @@ FROM Т_Дело
                                                            + dbo_FUND.FUND_NUM_2 +
                                                        IsNull(dbo_FUND.FUND_NUM_3, '') as united_fund_num
                                                 FROM tblFUND as dbo_FUND) З_United_FUND_NUM
-                                                   INNER JOIN Т_Фонд ON З_United_FUND_NUM.United_FUND_NUM = Т_Фонд.Номер_фонда) З_СоответствиеФондов
+                                                   INNER JOIN Т_Фонд ON TRIM(З_United_FUND_NUM.United_FUND_NUM) = TRIM(Т_Фонд.Номер_фонда)) З_СоответствиеФондов
                                          ON (dbo_INVENTORY.ISN_FUND = З_СоответствиеФондов.ISN_FUND) AND
                                             (Т_Описи.Код_фонда = З_СоответствиеФондов.Код_фонда)) З_СоответствиеОписей
                     ON Т_Дело.Код_Описи = З_СоответствиеОписей.Код_Описи

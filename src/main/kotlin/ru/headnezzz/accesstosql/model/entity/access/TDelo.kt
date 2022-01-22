@@ -1,4 +1,4 @@
-package ru.headnezzz.accesstosql.model.access
+package ru.headnezzz.accesstosql.model.entity.access
 
 import java.time.LocalDateTime
 import javax.persistence.Column

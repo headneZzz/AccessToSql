@@ -1,4 +1,4 @@
-package ru.headnezzz.accesstosql.model
+package ru.headnezzz.accesstosql.model.entity
 
 import javax.persistence.Entity
 import javax.persistence.Id
