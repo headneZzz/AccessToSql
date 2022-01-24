@@ -8,7 +8,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "Т_Дело")
-class TDelo {
+class AccessTDelo {
     @Id
     @Column(name = "Код_Дела")
     var kodDela: Int? = null
@@ -57,4 +57,8 @@ class TDelo {
 
     @Column(name = "Точная_дата", length = 50)
     var exactDate: String? = null
+
+    override fun toString(): String {
+        return "AccessTDelo(kodDela=$kodDela, nomerDela=$nomerDela, kodOpisi=$kodOpisi, kodFonda=$kodFonda, naimenovanieDela=$naimenovanieDela, kolvoListov=$kolvoListov, fizichSost=$fizichSost, otmetka=$otmetka, soderzh=$soderzh, startDate=$startDate, endDate=$endDate, isZagolovok=$isZagolovok, photo=$photo, executor=$executor, date=$date, exactDate=$exactDate)"
+    }
 }

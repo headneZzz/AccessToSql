@@ -1,8 +1,11 @@
-package ru.headnezzz.accesstosql
+package ru.headnezzz.accesstosql.runner
 
 import com.healthmarketscience.jackcess.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.batch.core.Job
+import org.springframework.batch.core.JobParameters
+import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.io.ClassPathResource
 import org.springframework.jdbc.core.JdbcTemplate
@@ -11,10 +14,11 @@ import org.springframework.stereotype.Component
 import ru.headnezzz.accesstosql.model.FileRow
 import ru.headnezzz.accesstosql.model.MappingFund
 import ru.headnezzz.accesstosql.model.MappingInventory
-import ru.headnezzz.accesstosql.model.entity.TblINVENTORY
-import ru.headnezzz.accesstosql.model.entity.access.TDelo
-import ru.headnezzz.accesstosql.model.entity.other.TblinventoryStructure
-import ru.headnezzz.accesstosql.repository.*
+import ru.headnezzz.accesstosql.model.entity.sqlserver.TblINVENTORY
+import ru.headnezzz.accesstosql.model.entity.sqlserver.SqlTDelo
+import ru.headnezzz.accesstosql.model.entity.sqlserver.TblinventoryStructure
+import ru.headnezzz.accesstosql.repository.access.AccessTDeloRepository
+import ru.headnezzz.accesstosql.repository.sqlserver.*
 import java.io.File
 import java.time.Instant
 import java.util.*
@@ -25,19 +29,24 @@ import javax.sql.DataSource
 class SpringRunner(
     val dataSource: DataSource,
     val jdbcTemplate: JdbcTemplate,
-    val fundRepository: FundRepository,
-    val unitedFundDao: UnitedFundDao,
     val inventoryRepository: InventoryRepository,
     val tDeloRepository: TDeloRepository,
     val unitRepository: UnitRepository,
-    val inventoryStructureRepository: InventoryStructureRepository
+    val inventoryStructureRepository: InventoryStructureRepository,
+    val accessTDeloRepository: AccessTDeloRepository,
+    val jobLauncher: JobLauncher,
+    val job: Job
 ) : CommandLineRunner {
 
     private val log: Logger = LoggerFactory.getLogger(SpringRunner::class.java)
 
     override fun run(vararg args: String?) {
-        val docsFromFile = getDocsFromFile()
-        complexToArchiveFund(docsFromFile)
+        jobLauncher.run(job, JobParameters())
+        log.info("SQL {}", unitRepository.count())
+        log.info("ACCESS {}", accessTDeloRepository.count())
+//        exportTDeloToSql()
+//        val docsFromFile = getDocsFromFile()
+//        complexToArchiveFund(docsFromFile)
     }
 
     private fun complexToArchiveFund(fileRows: List<FileRow>) {
@@ -62,14 +71,14 @@ class SpringRunner(
     }
 
     private fun exportTDeloToSql() {
-//        executeSqlScript("sql/create_t_delo.sql")
+        executeSqlScript("sql/create_t_delo.sql")
         executeSqlScript("sql/identity_on_t_delo.sql")
 
         val tDelo = DatabaseBuilder.open(File("D:\\Users\\headneZzz\\Downloads\\af\\Б_Ф_Общ.mdb")).getTable("Т_Дело")
         val rowCount = tDelo.rowCount
         log.info("Записей в Т_Дело: {}", rowCount)
         var counter = 0
-        var tDela = ArrayList<TDelo>()
+        var tDela = ArrayList<SqlTDelo>()
         val cursor = CursorBuilder.createCursor(tDelo)
         cursor.findFirstRow(mapOf("Код_Дела" to 704847))
         while (cursor.moveToNextRow()) {
@@ -92,25 +101,25 @@ class SpringRunner(
         println("Finished all threads")
     }
 
-    private fun toTDelo(row: Row): TDelo {
-        var tDelo = TDelo()
-        tDelo.kodDela = row.getInt("Код_Дела")
-        tDelo.nomerDela = row.getString("Номер_Дела")
-        tDelo.kodOpisi = row.getInt("Код_Описи")
-        tDelo.kodFonda = row.getInt("Код_фонда")
-        tDelo.naimenovanieDela = row.getString("Наименование_дела")
-        tDelo.kolvoListov = row.getShort("Кол-во_листов")
-        tDelo.fizichSost = row.getString("Физич_состояние")
-        tDelo.otmetka = row.getString("Отметка")
-        tDelo.soderzh = row.getString("Содержание")
-        tDelo.startDate = row.getShort("Год_начала")
-        tDelo.endDate = row.getShort("Год_конца")
-        tDelo.isZagolovok = row.getBoolean("Заголовок_Изменен")
-        tDelo.photo = row.getString("Фото")
-        tDelo.executor = row.getInt("Исполнитель")
-        tDelo.date = row.getLocalDateTime("Дата")
-        tDelo.exactDate = row.getString("Точная_дата")
-        return tDelo
+    private fun toTDelo(row: Row): SqlTDelo {
+        var sqlTDelo = SqlTDelo()
+        sqlTDelo.kodDela = row.getInt("Код_Дела")
+        sqlTDelo.nomerDela = row.getString("Номер_Дела")
+        sqlTDelo.kodOpisi = row.getInt("Код_Описи")
+        sqlTDelo.kodFonda = row.getInt("Код_фонда")
+        sqlTDelo.naimenovanieDela = row.getString("Наименование_дела")
+        sqlTDelo.kolvoListov = row.getShort("Кол-во_листов")
+        sqlTDelo.fizichSost = row.getString("Физич_состояние")
+        sqlTDelo.otmetka = row.getString("Отметка")
+        sqlTDelo.soderzh = row.getString("Содержание")
+        sqlTDelo.startDate = row.getShort("Год_начала")
+        sqlTDelo.endDate = row.getShort("Год_конца")
+        sqlTDelo.isZagolovok = row.getBoolean("Заголовок_Изменен")
+        sqlTDelo.photo = row.getString("Фото")
+        sqlTDelo.executor = row.getInt("Исполнитель")
+        sqlTDelo.date = row.getLocalDateTime("Дата")
+        sqlTDelo.exactDate = row.getString("Точная_дата")
+        return sqlTDelo
     }
 
     private fun getDocsFromFile(): List<FileRow> {
@@ -187,18 +196,7 @@ class SpringRunner(
         val tDelo: Table =
             DatabaseBuilder.open(File("D:\\Users\\headneZzz\\Downloads\\af\\Комплекс_Каталог.mdb")).getTable("Т_Фонд")
         val cursor: Cursor = CursorBuilder.createCursor(tDelo)
-        unitedFundDao.unitedFund().forEach {
-            if (cursor.findFirstRow(mapOf("Номер_фонда" to it.unitedFundNum))) {
-                mappingFunds.add(
-                    MappingFund(
-                        it.isnFund!!,
-                        it.unitedFundNum!!,
-                        cursor.currentRow.getString("Номер_фонда"),
-                        cursor.currentRow.getInt("Код_фонда")
-                    )
-                )
-            }
-        }
+
         log.info("Соответствие фондов: {}", mappingFunds.size)
         return mappingFunds
     }

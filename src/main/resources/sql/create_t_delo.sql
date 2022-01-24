@@ -17,5 +17,4 @@ create table Т_Дело
     Исполнитель       int,
     Дата              datetime,
     Точная_дата       nvarchar(50)
-);
-SET IDENTITY_INSERT Т_Дело ON;
+)

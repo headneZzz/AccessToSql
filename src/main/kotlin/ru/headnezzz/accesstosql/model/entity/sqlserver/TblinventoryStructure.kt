@@ -1,4 +1,4 @@
-package ru.headnezzz.accesstosql.model.entity.other
+package ru.headnezzz.accesstosql.model.entity.sqlserver
 
 import java.time.Instant
 import java.util.UUID

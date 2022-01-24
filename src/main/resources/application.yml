@@ -1,19 +1,20 @@
 spring:
   jpa:
-    properties:
-      hibernate:
-        order_inserts: true
-        jdbc:
-          batch_size: 1000
+    database-platform: org.hibernate.dialect.SQLServerDialect
+
   datasource:
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://localhost:1433;database=ArchiveFund
+    jdbc-url: jdbc:sqlserver://localhost:1433;database=ArchiveFund
     username: sa
     password: MiKe_5526
 
-#spring:
-#  datasource:
-#    driver-class-name: net.ucanaccess.jdbc.UcanaccessDriver
-#    url: jdbc:ucanaccess://D:\Users\headneZzz\Downloads\af\test.mdb
-#    username: sa
-#    password: MiKe_5526
+  access-datasource:
+    jdbc-url: jdbc:ucanaccess://G:\test.mdb;memory=false;openExclusive=true;ignoreCase=true
+
+  main:
+    banner-mode: off
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always

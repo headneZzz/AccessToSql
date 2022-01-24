@@ -1,8 +1,8 @@
-package ru.headnezzz.accesstosql.repository
+package ru.headnezzz.accesstosql.repository.sqlserver
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import ru.headnezzz.accesstosql.model.entity.TblUNIT
+import ru.headnezzz.accesstosql.model.entity.sqlserver.TblUNIT
 import java.util.*
 
 interface UnitRepository : JpaRepository<TblUNIT, UUID> {
