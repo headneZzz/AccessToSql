@@ -7,8 +7,9 @@ spring:
     username: sa
     password: MiKe_5526
 
-  access-datasource:
-    jdbc-url: jdbc:ucanaccess://G:\test.mdb;memory=false;openExclusive=true;ignoreCase=true
+#  access-enabled: true
+#  access-datasource:
+#    jdbc-url: jdbc:ucanaccess://G:\test.mdb;memory=false;openExclusive=true;ignoreCase=true
 
   main:
     banner-mode: off
@@ -18,3 +19,14 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: always
+
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: DEBUG
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE

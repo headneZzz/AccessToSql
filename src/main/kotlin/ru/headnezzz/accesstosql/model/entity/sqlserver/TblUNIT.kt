@@ -14,7 +14,7 @@ class TblUNIT {
     @Column(name = "OwnerID", nullable = false)
     var ownerID: UUID? = null
 
-    @Column(name = "Creation_Date_Time")
+    @Column(name = "CreationDateTime")
     var creationDateTime: Instant? = null
 
     @Column(name = "StatusID", nullable = false)
@@ -60,7 +60,7 @@ class TblUNIT {
     var unitKind: Int? = null
 
     @Column(name = "UNIT_NUM_1", length = 8)
-    var unitNum1: String? = null
+    var unitNum1: String = ""
 
     @Column(name = "UNIT_NUM_2", length = 2)
     var unitNum2: String? = null

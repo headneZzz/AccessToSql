@@ -1,6 +1,7 @@
 package ru.headnezzz.accesstosql.config
 
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder
@@ -22,6 +23,7 @@ import javax.sql.DataSource
     transactionManagerRef = "accessTransactionManager",
     basePackages = ["ru.headnezzz.accesstosql.repository.access"]
 )
+@ConditionalOnProperty(prefix = "spring", name = ["access-enabled"], havingValue = "true", matchIfMissing = false)
 class AccessConfig {
 
     @Bean("accessDataSource")

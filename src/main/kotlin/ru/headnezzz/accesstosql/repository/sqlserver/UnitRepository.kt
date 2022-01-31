@@ -9,9 +9,9 @@ interface UnitRepository : JpaRepository<TblUNIT, UUID> {
     @Query(
         value = """
         SELECT 
-        '00000000-0100-0000-0000-000000197221' AS ID,
+        newId() AS ID,
         '12345678-9012-3456-7890-123456789012' AS  OwnerID,
-    '2022-01-21 11:18:49' AS  Creation_Date_Time,
+    getDate() AS  CreationDateTime,
     'DD6ABDFF-D922-4746-80B8-15BE426E3849' AS  StatusID,
     'false' AS  Deleted,
         0                                  AS ISN_UNIT,
@@ -74,7 +74,7 @@ FROM Т_Дело
                                                            + dbo_FUND.FUND_NUM_2 +
                                                        IsNull(dbo_FUND.FUND_NUM_3, '') as united_fund_num
                                                 FROM tblFUND as dbo_FUND) З_United_FUND_NUM
-                                                   INNER JOIN Т_Фонд ON TRIM(З_United_FUND_NUM.United_FUND_NUM) = TRIM(Т_Фонд.Номер_фонда)) З_СоответствиеФондов
+                                                   INNER JOIN Т_Фонд ON З_United_FUND_NUM.United_FUND_NUM = Т_Фонд.Номер_фонда) З_СоответствиеФондов
                                          ON (dbo_INVENTORY.ISN_FUND = З_СоответствиеФондов.ISN_FUND) AND
                                             (Т_Описи.Код_фонда = З_СоответствиеФондов.Код_фонда)) З_СоответствиеОписей
                     ON Т_Дело.Код_Описи = З_СоответствиеОписей.Код_Описи
