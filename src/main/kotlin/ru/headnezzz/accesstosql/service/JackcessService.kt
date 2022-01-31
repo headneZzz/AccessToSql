@@ -50,25 +50,25 @@ class JackcessService(
         for (row in tOpisi) {
 
             var mappingFund: MappingFund? = null
-            var it: TblINVENTORY? = null
-            val its = inventories.filter { inventory -> inventory.inventoryNum1!! == row.getString("Номер_Описи") }
-            for (i in its) {
+            var inventory: TblINVENTORY? = null
+            val tblINVENTORIES = inventories.filter { it.inventoryNum1!! == row.getString("Номер_Описи") }
+            for (tblINVENTORY in tblINVENTORIES) {
                 mappingFund = mappingFunds.find {
                     it.fundCode == row.getInt("Код_фонда")
-                            && it.isnFund.toLong() == i?.isnFund
+                            && it.isnFund.toLong() == tblINVENTORY?.isnFund
                 }
                 if (mappingFund != null) {
-                    it = i
+                    inventory = tblINVENTORY
                     break
                 }
             }
 
-            if (mappingFund != null && it != null) {
+            if (mappingFund != null && inventory != null) {
                 mappingInventories.add(
                     MappingInventory(
-                        it.isnInventory!!,
+                        inventory.isnInventory!!,
                         mappingFund.unitedFundNum,
-                        it.inventoryNum1!!,
+                        inventory.inventoryNum1!!,
                         row.getString("Номер_Описи"),
                         row.getInt("Код_Описи")
                     )
