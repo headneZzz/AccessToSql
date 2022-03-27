@@ -1,15 +1,18 @@
 spring:
   jpa:
-    database-platform: org.hibernate.dialect.SQLServerDialect
+    database-platform: org.hibernate.dialect.SQLServer2012Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServer2012Dialect
 
   datasource:
-    jdbc-url: jdbc:sqlserver://localhost:1433;database=ArchiveFund
+    jdbc-url: jdbc:sqlserver://STROUSTRUP-PC\SQLEXPRESS;database=ArchiveFund;trustServerCertificate=true;
     username: sa
     password: MiKe_5526
 
-#  access-enabled: true
-#  access-datasource:
-#    jdbc-url: jdbc:ucanaccess://G:\test.mdb;memory=false;openExclusive=true;ignoreCase=true
+  access-enabled: true
+  access-datasource:
+    jdbc-url: jdbc:ucanaccess://G:\test.mdb;memory=false;openExclusive=true;ignoreCase=true
 
   main:
     banner-mode: off

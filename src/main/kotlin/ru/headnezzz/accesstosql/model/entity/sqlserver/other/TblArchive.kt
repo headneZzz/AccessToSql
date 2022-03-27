@@ -8,7 +8,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "tblARCHIVE")
-class TblARCHIVE {
+class TblArchive {
     @Id
     @Column(name = "ID", nullable = false)
     var id: UUID? = null

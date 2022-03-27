@@ -1,11 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
-    id("org.springframework.boot") version "2.6.2"
+    id("org.springframework.boot") version "2.6.3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
     kotlin("kapt") version "1.5.10"
+//    id("org.springframework.experimental.aot") version "0.11.2"
+//    id("org.graalvm.buildtools.native") version "0.9.6"
 }
 
 group = "ru.headnezzz"
@@ -29,16 +32,13 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     implementation("net.sf.ucanaccess:ucanaccess:5.0.1")
-    implementation("com.microsoft.sqlserver:mssql-jdbc:9.4.1.jre11")
-    implementation("com.healthmarketscience.jackcess:jackcess:4.0.1")
+    implementation("com.microsoft.sqlserver:mssql-jdbc:10.2.0.jre11")
+//    implementation("com.healthmarketscience.jackcess:jackcess:4.0.1")
 }
 
 kapt {
     arguments {
-        // Set Mapstruct Configuration options here
-        // https://kotlinlang.org/docs/reference/kapt.html#annotation-processor-arguments
-        // https://mapstruct.org/documentation/stable/reference/html/#configuration-options
-        // arg("mapstruct.defaultComponentModel", "spring")
+        arg("mapstruct.defaultComponentModel", "spring")
     }
 }
 
@@ -47,4 +47,9 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
+}
+
+tasks.withType<BootBuildImage> {
+    builder = "paketobuildpacks/builder:tiny"
+    environment = mapOf("BP_NATIVE_IMAGE" to "true")
 }

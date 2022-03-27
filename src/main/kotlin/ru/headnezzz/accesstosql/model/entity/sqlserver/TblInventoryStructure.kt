@@ -9,13 +9,13 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "tblINVENTORY_STRUCTURE")
-class TblinventoryStructure() {
+class TblInventoryStructure() {
     constructor(
-        ISN_INVENTORY: Long
+        isnInventory: Long
     ) : this() {
-        this.id = UUID(0, ISN_INVENTORY)
-        this.isnInventoryCls = ISN_INVENTORY
-        this.ISN_INVENTORY = ISN_INVENTORY
+        this.id = UUID(0, isnInventory)
+        this.isnInventoryCls = isnInventory
+        this.ISN_INVENTORY = isnInventory
     }
 
     @Id

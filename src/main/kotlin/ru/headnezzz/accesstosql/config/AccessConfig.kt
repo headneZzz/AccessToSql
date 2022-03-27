@@ -7,7 +7,10 @@ import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.ClassPathResource
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.jdbc.datasource.init.DataSourceInitializer
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.transaction.PlatformTransactionManager
@@ -49,5 +52,19 @@ class AccessConfig {
         @Qualifier("accessEntityManagerFactory") personalEntityManagerFactory: EntityManagerFactory
     ): PlatformTransactionManager {
         return JpaTransactionManager(personalEntityManagerFactory)
+    }
+
+    @Bean
+    fun dataSourceInitializer(@Qualifier("sqlServerDataSource") dataSource: DataSource): DataSourceInitializer? {
+        val resourceDatabasePopulator = ResourceDatabasePopulator()
+        resourceDatabasePopulator.addScripts(
+            ClassPathResource("sql/create_t_delo.sql"),
+            ClassPathResource("sql/create_t_fund.sql"),
+            ClassPathResource("sql/create_t_inventory.sql")
+        )
+        val dataSourceInitializer = DataSourceInitializer()
+        dataSourceInitializer.setDataSource(dataSource)
+        dataSourceInitializer.setDatabasePopulator(resourceDatabasePopulator)
+        return dataSourceInitializer
     }
 }

@@ -7,8 +7,8 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "tblPERIOD")
-class TblPERIOD {
+@Table(name = "tblSECURITY_REASON")
+class TblSecurityReason {
     @Id
     @Column(name = "ID", nullable = false)
     var id: UUID? = null

@@ -6,7 +6,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "tblUNIT")
-class TblUNIT {
+class TblUnit {
     @Id
     @Column(name = "ID", nullable = false)
     var id: UUID? = null

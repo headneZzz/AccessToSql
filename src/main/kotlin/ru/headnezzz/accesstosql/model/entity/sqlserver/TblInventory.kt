@@ -8,7 +8,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "tblINVENTORY")
-class TblINVENTORY {
+class TblInventory {
     @Id
     @Column(name = "ID", nullable = false)
     var id: UUID? = null

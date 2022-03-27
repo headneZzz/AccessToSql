@@ -2,10 +2,10 @@ package ru.headnezzz.accesstosql.repository.sqlserver
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import ru.headnezzz.accesstosql.model.entity.sqlserver.TblUNIT
+import ru.headnezzz.accesstosql.model.entity.sqlserver.TblUnit
 import java.util.*
 
-interface UnitRepository : JpaRepository<TblUNIT, UUID> {
+interface TblUnitRepository : JpaRepository<TblUnit, UUID> {
     @Query(
         value = """
         SELECT 
@@ -81,8 +81,8 @@ FROM Т_Дело
 WHERE (((З_СоответствиеОписей.United_FUND_NUM) = :fund) AND ((З_СоответствиеОписей.Номер_Описи) = :inventory));
     """, nativeQuery = true
     )
-    fun main(fund: String, inventory: String): List<TblUNIT>
+    fun main(fund: String, inventory: String): List<TblUnit>
 
-    @Query(value = "SELECT MAX(isnUnit) from TblUNIT ")
+    @Query(value = "SELECT MAX(isnUnit) from TblUnit ")
     fun getMaxIsnUnit(): Long
 }

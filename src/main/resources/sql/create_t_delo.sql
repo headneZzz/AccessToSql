@@ -1,4 +1,5 @@
-drop table if exists Т_Дело;
+IF OBJECT_ID(N'Т_Дело', N'U') IS NOT NULL
+    DROP TABLE [Т_Дело];
 create table Т_Дело
 (
     Код_Дела          int identity,
@@ -17,4 +18,4 @@ create table Т_Дело
     Исполнитель       int,
     Дата              datetime,
     Точная_дата       nvarchar(50)
-)
+);

@@ -3,6 +3,7 @@ package ru.headnezzz.accesstosql.runner
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
+import org.springframework.batch.core.JobParameter
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.boot.CommandLineRunner
@@ -22,9 +23,16 @@ class SpringRunner(
     private val log: Logger = LoggerFactory.getLogger(SpringRunner::class.java)
 
     override fun run(vararg args: String?) {
-        jobLauncher.run(job, JobParameters())
+        jobLauncher.run(job, createJobParameters())
         val docsFromFile = getDocsFromFile()
         migrationService.complexToArchiveFund(docsFromFile)
+        readLine()
+    }
+
+    private fun createJobParameters(): JobParameters {
+        val confMap: MutableMap<String, JobParameter> = HashMap()
+        confMap["time"] = JobParameter(System.currentTimeMillis())
+        return JobParameters(confMap)
     }
 
     private fun getDocsFromFile(): List<FileRow> {

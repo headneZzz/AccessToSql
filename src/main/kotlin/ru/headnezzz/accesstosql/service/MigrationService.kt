@@ -4,36 +4,37 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import ru.headnezzz.accesstosql.model.FileRow
-import ru.headnezzz.accesstosql.model.entity.sqlserver.TblinventoryStructure
-import ru.headnezzz.accesstosql.repository.sqlserver.InventoryStructureRepository
-import ru.headnezzz.accesstosql.repository.sqlserver.UnitRepository
+import ru.headnezzz.accesstosql.model.entity.sqlserver.TblInventoryStructure
+import ru.headnezzz.accesstosql.repository.sqlserver.TblInventoryStructureRepository
+import ru.headnezzz.accesstosql.repository.sqlserver.TblUnitRepository
 
 @Service
 class MigrationService(
-    val unitRepository: UnitRepository,
-    val inventoryStructureRepository: InventoryStructureRepository
+    val tblUnitRepository: TblUnitRepository,
+    val tblInventoryStructureRepository: TblInventoryStructureRepository
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(MigrationService::class.java)
 
     fun complexToArchiveFund(fileRows: List<FileRow>) {
         var totalSize = 0
+        // Разделяет цифры в начале и буквы в конце на 2 группы
         val regex = "(\\d*)(\\D*)".toRegex()
         for (fileRow in fileRows) {
-            val units = unitRepository.main(fileRow.fund.trim(), fileRow.inventory.trim())
+            val units = tblUnitRepository.main(fileRow.fund.trim(), fileRow.inventory.trim())
             log.info("Фонд {} опись {} найдено {}", fileRow.fund, fileRow.inventory, units.size)
             totalSize += units.size
             for (unit in units) {
-                unit.isnUnit = unitRepository.getMaxIsnUnit() + 1
+                unit.isnUnit = tblUnitRepository.getMaxIsnUnit() + 1
                 val matchResult = regex.find(unit.unitNum1)
                 unit.unitNum1 = matchResult!!.groups[1]!!.value
                 unit.unitNum2 = matchResult.groups[2]?.value
-                if (inventoryStructureRepository.findByIsnInventoryCls(unit.isnInventoryCls) == null) {
-                    inventoryStructureRepository.save(TblinventoryStructure(unit.isnInventoryCls))
+                if (tblInventoryStructureRepository.findByIsnInventoryCls(unit.isnInventoryCls) == null) {
+                    tblInventoryStructureRepository.save(TblInventoryStructure(unit.isnInventoryCls))
                 }
-                unitRepository.save(unit)
+                tblUnitRepository.save(unit)
             }
         }
-        log.info("{}", totalSize)
+        log.info("Всего импортировано: {}", totalSize)
     }
 }

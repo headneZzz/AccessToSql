@@ -1,3 +1,6 @@
+IF OBJECT_ID(N'Т_Описи', N'U') IS NOT NULL
+    DROP TABLE [Т_Описи];
+
 create table Т_Описи
 (
     Код_Описи      int identity,

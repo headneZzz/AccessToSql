@@ -7,8 +7,8 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "tblDOC_TYPE_CL")
-class TbldocTypeCl {
+@Table(name = "tblSECURLEVEL")
+class TblSecurityLevel {
     @Id
     @Column(name = "ID", nullable = false)
     var id: UUID? = null
